@@ -348,7 +348,7 @@
     doneButtonText: 'Close',
     multipleSeparator: ', ',
     styleBase: 'btn',
-    style: 'btn-default',
+    style: 'btn-secondary',
     size: 'auto',
     title: null,
     selectedTextFormat: 'values',
@@ -365,8 +365,8 @@
     liveSearchNormalize: false,
     liveSearchStyle: 'contains',
     actionsBox: false,
-    iconBase: 'glyphicon',
-    tickIcon: 'glyphicon-ok',
+    iconBase: 'fa',
+    tickIcon: 'fa-check',
     showTick: false,
     template: {
       caret: '<span class="caret"></span>'
@@ -519,7 +519,7 @@
           header +
           searchbox +
           actionsbox +
-          '<ul class="dropdown-menu inner" role="listbox" aria-expanded="false">' +
+          '<ul class="inner" role="listbox" aria-expanded="false">' +
           '</ul>' +
           donebutton +
           '</div>' +
@@ -560,7 +560,7 @@
       var generateLI = function (content, index, classes, optgroup) {
         return '<li' +
             ((typeof classes !== 'undefined' & '' !== classes) ? ' class="' + classes + '"' : '') +
-            ((typeof index !== 'undefined' & null !== index) ? ' data-original-index="' + index + '"' : '') +
+            ((typeof index !== 'undefined' & null !== index) ? ' class=\'dropdown-item\' data-original-index="' + index + '"' : '') +
             ((typeof optgroup !== 'undefined' & null !== optgroup) ? 'data-optgroup="' + optgroup + '"' : '') +
             '>' + content + '</li>';
       };
@@ -574,7 +574,7 @@
        */
       var generateA = function (text, classes, inline, tokens) {
         return '<a tabindex="0"' +
-            (typeof classes !== 'undefined' ? ' class="' + classes + '"' : '') +
+            (typeof classes !== 'undefined' ? ' class="dropdown-item ' + classes + '"' : '') +
             (inline ? ' style="' + inline + '"' : '') +
             (that.options.liveSearchNormalize ? ' data-normalized-text="' + normalizeToBase(htmlEscape($(text).html())) + '"' : '') +
             (typeof tokens !== 'undefined' || tokens !== null ? ' data-tokens="' + tokens + '"' : '') +
@@ -633,7 +633,7 @@
 
         if (that.options.hideDisabled && (isDisabled && !isOptgroup || isOptgroupDisabled)) {
           // set prevHiddenIndex - the index of the first hidden option in a group of hidden options
-          // used to determine whether or not a divider should be placed after an optgroup if there are
+          // used to determine whether or not a dropdown-divider should be placed after an optgroup if there are
           // hidden options between the optgroup and the first visible option
           prevHiddenIndex = $this.data('prevHiddenIndex');
           $this.next().data('prevHiddenIndex', (prevHiddenIndex !== undefined ? prevHiddenIndex : index));
@@ -647,7 +647,7 @@
           text = icon + '<span class="text">' + text + subtext + '</span>';
         }
 
-        if (isOptgroup && $this.data('divider') !== true) {
+        if (isOptgroup && $this.data('dropdown-divider') !== true) {
           if (that.options.hideDisabled && isDisabled) {
             if ($parent.data('allOptionsDisabled') === undefined) {
               var $options = $parent.children();
@@ -674,7 +674,7 @@
 
             if (index !== 0 && _li.length > 0) { // Is it NOT the first option of the select && are there elements in the dropdown?
               liIndex++;
-              _li.push(generateLI('', null, 'divider', optID + 'div'));
+              _li.push(generateLI('', null, 'dropdown-divider', optID + 'div'));
             }
             liIndex++;
             _li.push(generateLI(label, null, 'dropdown-header' + optGroupClass, optID));
@@ -686,11 +686,11 @@
           }
 
           _li.push(generateLI(generateA(text, 'opt ' + optionClass + optGroupClass, inline, tokens), index, '', optID));
-        } else if ($this.data('divider') === true) {
-          _li.push(generateLI('', index, 'divider'));
+        } else if ($this.data('dropdown-divider') === true) {
+          _li.push(generateLI('', index, 'dropdown-divider'));
         } else if ($this.data('hidden') === true) {
           // set prevHiddenIndex - the index of the first hidden option in a group of hidden options
-          // used to determine whether or not a divider should be placed after an optgroup if there are
+          // used to determine whether or not a dropdown-divider should be placed after an optgroup if there are
           // hidden options between the optgroup and the first visible option
           prevHiddenIndex = $this.data('prevHiddenIndex');
           $this.next().data('prevHiddenIndex', (prevHiddenIndex !== undefined ? prevHiddenIndex : index));
@@ -715,7 +715,7 @@
 
           if (showDivider) {
             liIndex++;
-            _li.push(generateLI('', null, 'divider', optID + 'div'));
+            _li.push(generateLI('', null, 'dropdown-divider', optID + 'div'));
           }
           _li.push(generateLI(generateA(text, optionClass, inline, tokens), index));
         }
@@ -790,7 +790,7 @@
         var max = this.options.selectedTextFormat.split('>');
         if ((max.length > 1 && selectedItems.length > max[1]) || (max.length == 1 && selectedItems.length >= 2)) {
           notDisabled = this.options.hideDisabled ? ', [disabled]' : '';
-          var totalCount = $selectOptions.not('[data-divider="true"], [data-hidden="true"]' + notDisabled).length,
+          var totalCount = $selectOptions.not('[data-dropdown-divider="true"], [data-hidden="true"]' + notDisabled).length,
               tr8nText = (typeof this.options.countSelectedText === 'function') ? this.options.countSelectedText(selectedItems.length, totalCount) : this.options.countSelectedText;
           title = tr8nText.replace('{0}', selectedItems.length.toString()).replace('{1}', totalCount.toString());
         }
@@ -856,7 +856,8 @@
       newElement.className = this.$menu[0].parentNode.className + ' open';
       menu.className = 'dropdown-menu open';
       menuInner.className = 'dropdown-menu inner';
-      divider.className = 'divider';
+      divider.className = 'dropdown-divider';
+      a.className = 'dropdown-item';
 
       text.appendChild(document.createTextNode('Inner text'));
       a.appendChild(text);
@@ -1038,8 +1039,8 @@
         this.$searchbox.off('input.getSize propertychange.getSize').on('input.getSize propertychange.getSize', getSize);
         $window.off('resize.getSize scroll.getSize').on('resize.getSize scroll.getSize', getSize);
       } else if (this.options.size && this.options.size != 'auto' && this.$lis.not(notDisabled).length > this.options.size) {
-        var optIndex = this.$lis.not('.divider').not(notDisabled).children().slice(0, this.options.size).last().parent().index(),
-            divLength = this.$lis.slice(0, optIndex + 1).filter('.divider').length;
+        var optIndex = this.$lis.not('.dropdown-divider').not(notDisabled).children().slice(0, this.options.size).last().parent().index(),
+            divLength = this.$lis.slice(0, optIndex + 1).filter('.dropdown-divider').length;
         menuHeight = liHeight * this.options.size + divLength * divHeight + menuPadding.vert;
 
         if (that.options.container) {
@@ -1378,7 +1379,7 @@
         }
       });
 
-      this.$menuInner.on('click', '.divider, .dropdown-header', function (e) {
+      this.$menuInner.on('click', '.dropdown-divider, .dropdown-header', function (e) {
         e.preventDefault();
         e.stopPropagation();
         if (that.options.liveSearch) {
@@ -1447,7 +1448,7 @@
         $no_results.remove();
 
         if (that.$searchbox.val()) {
-          var $searchBase = that.$lis.not('.is-hidden, .divider, .dropdown-header'),
+          var $searchBase = that.$lis.not('.is-hidden, .dropdown-divider, .dropdown-header'),
               $hideItems;
           if (that.options.liveSearchNormalize) {
             $hideItems = $searchBase.not(':a' + that._searchStyle() + '("' + normalizeToBase(that.$searchbox.val()) + '")');
@@ -1465,11 +1466,11 @@
             var $lisVisible = that.$lis.not('.hidden'),
                 $foundDiv;
 
-            // hide divider if first or last visible, or if followed by another divider
+            // hide dropdown-divider if first or last visible, or if followed by another dropdown-divider
             $lisVisible.each(function (index) {
               var $this = $(this);
 
-              if ($this.hasClass('divider')) {
+              if ($this.hasClass('dropdown-divider')) {
                 if ($foundDiv === undefined) {
                   $this.addClass('hidden');
                 } else {
@@ -1518,7 +1519,7 @@
       this.findLis();
 
       var $options = this.$element.find('option'),
-          $lisVisible = this.$lis.not('.divider, .dropdown-header, .disabled, .hidden'),
+          $lisVisible = this.$lis.not('.dropdown-divider, .dropdown-header, .disabled, .hidden'),
           lisVisLen = $lisVisible.length,
           selectedOptions = [];
           
@@ -1569,7 +1570,7 @@
           index,
           prevIndex,
           isActive,
-          selector = ':not(.disabled, .hidden, .dropdown-header, .divider)',
+          selector = ':not(.disabled, .hidden, .dropdown-header, .dropdown-divider)',
           keyCodeMap = {
             32: ' ',
             48: '0',
